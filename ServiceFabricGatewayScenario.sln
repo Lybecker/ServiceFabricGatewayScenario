@@ -15,32 +15,44 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppService.StatelessWebApi"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3FD47EA4-E7B5-4892-8BE6-52225A850B27}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{3FD47EA4-E7B5-4892-8BE6-52225A850B27}.Debug|x64.ActiveCfg = Debug|x64
 		{3FD47EA4-E7B5-4892-8BE6-52225A850B27}.Debug|x64.Build.0 = Debug|x64
 		{3FD47EA4-E7B5-4892-8BE6-52225A850B27}.Debug|x64.Deploy.0 = Debug|x64
+		{3FD47EA4-E7B5-4892-8BE6-52225A850B27}.Release|Any CPU.ActiveCfg = Release|x64
 		{3FD47EA4-E7B5-4892-8BE6-52225A850B27}.Release|x64.ActiveCfg = Release|x64
 		{3FD47EA4-E7B5-4892-8BE6-52225A850B27}.Release|x64.Build.0 = Release|x64
 		{3FD47EA4-E7B5-4892-8BE6-52225A850B27}.Release|x64.Deploy.0 = Release|x64
+		{D12B49C8-DB5F-4787-BAD2-BA01C218B6F4}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{D12B49C8-DB5F-4787-BAD2-BA01C218B6F4}.Debug|x64.ActiveCfg = Debug|x64
 		{D12B49C8-DB5F-4787-BAD2-BA01C218B6F4}.Debug|x64.Build.0 = Debug|x64
+		{D12B49C8-DB5F-4787-BAD2-BA01C218B6F4}.Release|Any CPU.ActiveCfg = Release|x64
 		{D12B49C8-DB5F-4787-BAD2-BA01C218B6F4}.Release|x64.ActiveCfg = Release|x64
 		{D12B49C8-DB5F-4787-BAD2-BA01C218B6F4}.Release|x64.Build.0 = Release|x64
+		{75AE75F7-E7B1-458F-9985-471671CB580F}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{75AE75F7-E7B1-458F-9985-471671CB580F}.Debug|x64.ActiveCfg = Debug|x64
 		{75AE75F7-E7B1-458F-9985-471671CB580F}.Debug|x64.Build.0 = Debug|x64
 		{75AE75F7-E7B1-458F-9985-471671CB580F}.Debug|x64.Deploy.0 = Debug|x64
+		{75AE75F7-E7B1-458F-9985-471671CB580F}.Release|Any CPU.ActiveCfg = Release|x64
 		{75AE75F7-E7B1-458F-9985-471671CB580F}.Release|x64.ActiveCfg = Release|x64
 		{75AE75F7-E7B1-458F-9985-471671CB580F}.Release|x64.Build.0 = Release|x64
 		{75AE75F7-E7B1-458F-9985-471671CB580F}.Release|x64.Deploy.0 = Release|x64
+		{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}.Debug|x64.ActiveCfg = Debug|x64
 		{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}.Debug|x64.Build.0 = Debug|x64
+		{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}.Release|Any CPU.ActiveCfg = Release|x64
 		{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}.Release|x64.ActiveCfg = Release|x64
 		{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}.Release|x64.Build.0 = Release|x64
+		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Debug|x64.ActiveCfg = Debug|x64
 		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Debug|x64.Build.0 = Debug|x64
+		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Release|Any CPU.ActiveCfg = Release|x64
 		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Release|x64.ActiveCfg = Release|x64
 		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection

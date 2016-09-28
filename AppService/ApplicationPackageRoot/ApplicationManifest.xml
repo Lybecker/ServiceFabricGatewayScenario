@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="AppServiceType" ApplicationTypeVersion="1.0.1" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="AppServiceType" ApplicationTypeVersion="1.0.6" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="StatelessWebApi_InstanceCount" DefaultValue="-1" />
     <Parameter Name="Stateful_MinReplicaSetSize" DefaultValue="3" />
@@ -10,11 +10,11 @@
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="AppService.StatelessWebApiPkg" ServiceManifestVersion="1.0.0" />
+    <ServiceManifestRef ServiceManifestName="AppService.StatelessWebApiPkg" ServiceManifestVersion="1.0.4" />
     <ConfigOverrides />
   </ServiceManifestImport>
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="AppService.StatefulPkg" ServiceManifestVersion="1.0.1" />
+    <ServiceManifestRef ServiceManifestName="AppService.StatefulPkg" ServiceManifestVersion="1.0.2" />
     <ConfigOverrides />
   </ServiceManifestImport>
   <DefaultServices>

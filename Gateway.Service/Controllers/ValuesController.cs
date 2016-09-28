@@ -1,18 +1,15 @@
 ﻿using AppService.Stateful;
+using Microsoft.ServiceFabric.Http.Client;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -23,14 +20,10 @@ namespace Gateway.Service.Controllers
     {
         private const int partitionKey = 1;
         private static readonly HttpCommunicationClientFactory communicationFactory;
-        private const int MaxQueryRetryCount = 3;
-        private static readonly TimeSpan backoffQueryDelay;
         private static readonly FabricClient fabricClient;
 
         static ValuesController()
         {
-            backoffQueryDelay = TimeSpan.FromSeconds(3);
-
             fabricClient = new FabricClient();
 
             communicationFactory = new HttpCommunicationClientFactory(new ServicePartitionResolver(() => fabricClient));
@@ -72,6 +65,35 @@ namespace Gateway.Service.Controllers
             });
 
             return result;
+        }
+
+
+        // Client from https://github.com/xinyanmsft/SFStartupHttp/tree/TestA
+        [HttpGet]
+        public async Task<string> HttpXinyan()
+        {
+            var serviceUri = new ServiceUriBuilder("AppService", "StatelessWebApi").ToUri();
+
+            var client = CreateHttpClient();
+
+            var x = await client.GetStringAsync(serviceUri.ToString() + "/api/stateless");
+            //var x = await client.GetStringAsync(serviceUri.ToString().Replace("fabric:","http:/") + "/api/stateless");
+
+            return x;
+
+        }
+
+        private HttpClient CreateHttpClient()
+        {
+            // TODO: To enable circuit breaker pattern, set proper values in CircuitBreakerHttpMessageHandler constructor.
+            // One can further customize the Http client behavior by explicitly creating the HttpClientHandler, or by  
+            // adjusting ServicePointManager properties.
+            var handler = //new CircuitBreakerHttpMessageHandler(10, TimeSpan.FromSeconds(10),
+                            new HttpServiceClientHandler(
+                                new HttpServiceClientExceptionHandler(
+                                    new HttpServiceClientStatusCodeRetryHandler(
+                                        new HttpTraceMessageHandler(null))));
+            return new HttpClient(handler);
         }
     }
 }
