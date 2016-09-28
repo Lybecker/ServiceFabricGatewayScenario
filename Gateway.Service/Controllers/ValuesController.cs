@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.ServiceFabric;
 
 namespace Gateway.Service.Controllers
 {
@@ -72,15 +73,14 @@ namespace Gateway.Service.Controllers
         [HttpGet]
         public async Task<string> HttpXinyan()
         {
-            var serviceUri = new ServiceUriBuilder("AppService", "StatelessWebApi").ToUri();
+            string requestUri = new NamedApplication("fabric:/AppService")
+                                    .AppendNamedService("StatelessWebApi")
+                                    .BuildEndpointUri(endpointName: "")
+                                    + "/api/stateless";
 
             var client = CreateHttpClient();
-
-            var x = await client.GetStringAsync(serviceUri.ToString() + "/api/stateless");
-            //var x = await client.GetStringAsync(serviceUri.ToString().Replace("fabric:","http:/") + "/api/stateless");
-
-            return x;
-
+            var result = await client.GetStringAsync(requestUri);
+            return result;
         }
 
         private HttpClient CreateHttpClient()

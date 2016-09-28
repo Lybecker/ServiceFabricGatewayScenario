@@ -41,9 +41,6 @@ namespace Microsoft.ServiceFabric.Http.Client
         #region DelegatingHandler override
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            ////HACK: fix http: back to fabric:
-            //var tempRequestUri = new Uri(request.RequestUri.AbsoluteUri.Replace("http:/", "fabric:"));
-
             // If the request is outside of the Fabric application, just pass through and do nothing
             if (!StringComparer.OrdinalIgnoreCase.Equals(request.RequestUri.Host, "fabric"))
             {
