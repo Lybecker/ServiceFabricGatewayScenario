@@ -11,6 +11,8 @@ Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "AppService", "AppService\Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppService.Stateful", "AppService.Stateful\AppService.Stateful.csproj", "{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppService.StatelessWebApi", "AppService.StatelessWebApi\AppService.StatelessWebApi.csproj", "{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -37,6 +39,10 @@ Global
 		{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}.Debug|x64.Build.0 = Debug|x64
 		{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}.Release|x64.ActiveCfg = Release|x64
 		{18AC1E64-2453-4AD1-AE3F-2BEEC537BE06}.Release|x64.Build.0 = Release|x64
+		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Debug|x64.ActiveCfg = Debug|x64
+		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Debug|x64.Build.0 = Debug|x64
+		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Release|x64.ActiveCfg = Release|x64
+		{0C421C18-59A1-4BDA-AD09-A00652C8CFDB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AppService.Stateful\AppService.Stateful.csproj" />
+    <ProjectReference Include="..\AppService.StatelessWebApi\AppService.StatelessWebApi.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>
