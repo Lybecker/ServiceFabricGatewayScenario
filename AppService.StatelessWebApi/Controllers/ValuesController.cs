@@ -9,7 +9,7 @@ namespace AppService.StatelessWebApi.Controllers
         // GET api/values 
         public IEnumerable<string> Get()
         {
-            return new string[] { "Hello World"};
+            return new string[] { "Hello World from stateless service using http"};
         }
     }
 }

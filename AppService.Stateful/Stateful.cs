@@ -29,7 +29,7 @@ namespace AppService.Stateful
 
         public Task<string> GetHelloWorld()
         {
-            return Task.FromResult<string>("Hello World");
+            return Task.FromResult<string>("Hello World from Statefull service using remoting");
         }
 
         /// <summary>
