@@ -48,6 +48,14 @@ namespace Gateway.Service.Controllers
         }
 
         [HttpGet]
+        public string Sleep(int sec)
+        {
+            System.Threading.Thread.Sleep(sec * 1000);
+
+            return $"Hello World after {sec} s";
+        }
+
+        [HttpGet]
         public async Task<string> Http()
         {
             var serviceUri = new ServiceUriBuilder("AppService", "StatelessWebApi").ToUri();
