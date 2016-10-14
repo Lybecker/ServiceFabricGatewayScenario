@@ -6,10 +6,15 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
+using System.Fabric.Description;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.ServiceFabric;
@@ -23,9 +28,39 @@ namespace Gateway.Service.Controllers
         private static readonly HttpCommunicationClientFactory communicationFactory;
         private static readonly FabricClient fabricClient;
 
+        private static string _log = string.Empty;
+        private static List<ResolvedServiceEndpoint> _serviceEndpoints = new List<ResolvedServiceEndpoint>();
+        static HttpClient _client;
+
         static ValuesController()
         {
             fabricClient = new FabricClient();
+
+            // Hook up on notification events
+            fabricClient.ServiceManager.ServiceNotificationFilterMatched += (sender, args) =>
+            {
+                _log += "Event happen " + DateTime.UtcNow + Environment.NewLine;
+                var notificationEventArgs = args as FabricClient.ServiceManagementClient.ServiceNotificationEventArgs;
+                if (notificationEventArgs != null)
+                {
+                    _serviceEndpoints = notificationEventArgs.Notification.Endpoints.ToList();
+                }
+            };
+
+            var serviceUri = new Uri("fabric:/AppService/StatelessWebApi");
+            fabricClient.ServiceManager.RegisterServiceNotificationFilterAsync(new ServiceNotificationFilterDescription()
+            {
+                Name = serviceUri,
+                MatchPrimaryChangeOnly = false,
+                MatchNamePrefix = false
+            });
+
+            // Populate list of endpoints
+            var servicePartitionResolver = ServicePartitionResolver.GetDefault();
+            var p = servicePartitionResolver.ResolveAsync(serviceUri, ServicePartitionKey.Singleton, CancellationToken.None).Result;
+            _serviceEndpoints = p.Endpoints.ToList();
+
+            _client = CreateHttpClient(() => _serviceEndpoints);
 
             communicationFactory = new HttpCommunicationClientFactory(new ServicePartitionResolver(() => fabricClient));
         }
@@ -39,6 +74,19 @@ namespace Gateway.Service.Controllers
             string message = await client.GetHelloWorld();
 
             return new[] { message };
+        }
+
+        [HttpGet]
+        public async Task<string> HttpWithNotification()
+        {
+
+            string requestUri = new NamedApplication("fabric:/AppService")
+                .AppendNamedService("StatelessWebApi")
+                .BuildEndpointUri(endpointName: "")
+                                + "/api/stateless";
+
+            var result = await _client.GetStringAsync(requestUri);
+            return result;
         }
 
         [HttpGet]
@@ -108,25 +156,26 @@ namespace Gateway.Service.Controllers
         public async Task<string> HttpXinyan()
         {
             string requestUri = new NamedApplication("fabric:/AppService")
-                                    .AppendNamedService("StatelessWebApi")
-                                    .BuildEndpointUri(endpointName: "")
-                                    + "/api/stateless";
+                .AppendNamedService("StatelessWebApi")
+                .BuildEndpointUri(endpointName: "")
+                                + "/api/stateless";
 
-            var client = CreateHttpClient();
+            var client = CreateHttpClient(() => null);
             var result = await client.GetStringAsync(requestUri);
             return result;
         }
 
-        private HttpClient CreateHttpClient()
+        private static HttpClient CreateHttpClient(Func<List<ResolvedServiceEndpoint>> activeEndpointFunc)
         {
             // TODO: To enable circuit breaker pattern, set proper values in CircuitBreakerHttpMessageHandler constructor.
             // One can further customize the Http client behavior by explicitly creating the HttpClientHandler, or by  
             // adjusting ServicePointManager properties.
             var handler = //new CircuitBreakerHttpMessageHandler(10, TimeSpan.FromSeconds(10),
-                            new HttpServiceClientHandler(
-                                new HttpServiceClientExceptionHandler(
-                                    new HttpServiceClientStatusCodeRetryHandler(
-                                        new HttpTraceMessageHandler(null))));
+                new HttpServiceClientHandler(
+                    activeEndpointFunc,
+                    new HttpServiceClientExceptionHandler(
+                        new HttpServiceClientStatusCodeRetryHandler(
+                            new HttpTraceMessageHandler(null))));
             return new HttpClient(handler);
         }
 

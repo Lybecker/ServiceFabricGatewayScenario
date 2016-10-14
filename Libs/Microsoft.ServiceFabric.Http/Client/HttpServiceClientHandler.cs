@@ -24,15 +24,14 @@ namespace Microsoft.ServiceFabric.Http.Client
         /// <summary>
         /// Initialize a new instance of HttpServiceClientHandler.
         /// </summary>
+        /// <param name="activeEndpointFunc"></param>
         /// <param name="innerHandler">The inner handler.</param>
         /// <param name="requestTimeoutMs">The request timeout.</param>
         /// <param name="maxRetries">The max number of times to retry service endpoint resolution.</param>
         /// <param name="initialRetryDelayMs">The initial delay between service endpoint resolution, in milliseconds.</param>
-        public HttpServiceClientHandler(HttpMessageHandler innerHandler,
-                                        int requestTimeoutMs = 10000,
-                                        int maxRetries = 5, 
-                                        int initialRetryDelayMs = 25):base(innerHandler)
+        public HttpServiceClientHandler(Func<List<ResolvedServiceEndpoint>> activeEndpointFunc, HttpMessageHandler innerHandler, int requestTimeoutMs = 10000, int maxRetries = 5, int initialRetryDelayMs = 25):base(innerHandler)
         {
+            _activeEndpointFunc = activeEndpointFunc;
             this.requestTimeoutMs = requestTimeoutMs;
             this.maxRetries = maxRetries;
             this.initialRetryDelayMs = initialRetryDelayMs;
@@ -72,13 +71,23 @@ namespace Microsoft.ServiceFabric.Http.Client
                         serviceEndpointJson = this.GetRandomEndpointAddress(partition.Endpoints, 0);
                         break;
                 }
-                string endpointUrl = JObject.Parse(serviceEndpointJson)["Endpoints"][uriBuilder.EndpointName].Value<string>();
-                request.RequestUri = new Uri($"{endpointUrl.TrimEnd('/')}/{uriBuilder.ServicePathAndQuery.TrimStart('/')}", UriKind.Absolute);
 
-                CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(this.requestTimeoutMs).Token,
-                                                                                              cancellationToken);
+                string endpointUrl = JObject.Parse(serviceEndpointJson)["Endpoints"][uriBuilder.EndpointName].Value<string>();
+
                 try
                 {
+                    //TODO: added code by RSD
+                    var activeEndpoints = _activeEndpointFunc();
+                    var isOkay = activeEndpoints.Any(x => x.Address == serviceEndpointJson);
+                    if (!isOkay)
+                        throw new NeedsResolveServiceEndpointException("This client is not active any more", new Exception("---"));
+
+
+                    request.RequestUri = new Uri($"{endpointUrl.TrimEnd('/')}/{uriBuilder.ServicePathAndQuery.TrimStart('/')}", UriKind.Absolute);
+
+                    CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(this.requestTimeoutMs).Token,
+                        cancellationToken);
+
                     HttpResponseMessage response = await base.SendAsync(request, cts.Token);
                     return response;
                 }
@@ -120,6 +129,7 @@ namespace Microsoft.ServiceFabric.Http.Client
 
         private readonly int maxRetries;
         private readonly int initialRetryDelayMs;
+        private readonly Func<List<ResolvedServiceEndpoint>> _activeEndpointFunc;
         private readonly int requestTimeoutMs;
         private readonly Random random = new Random();
         #endregion
