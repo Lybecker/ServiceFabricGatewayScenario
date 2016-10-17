@@ -48,6 +48,21 @@ namespace Gateway.Service.Controllers
         }
 
         [HttpGet]
+        public async Task<string> Wcf()
+        {
+            var serviceUri = new ServiceUriBuilder("AppService", "Stateful").ToUri();
+            
+            //IStateful client = WcfServiceClientBuilder.CreateClient(serviceUri, new ServicePartitionKey(partitionKey));
+            //string message = await client.GetHelloWorld();
+
+            var client = WcfServiceClientBuilder.CreateClient(serviceUri, new ServicePartitionKey(partitionKey));
+            var message = await client.InvokeWithRetryAsync(proxy => proxy.Channel.GetHelloWorld());
+
+            return message;
+        }
+
+
+        [HttpGet]
         public string Sleep(int sec)
         {
             System.Threading.Thread.Sleep(sec * 1000);

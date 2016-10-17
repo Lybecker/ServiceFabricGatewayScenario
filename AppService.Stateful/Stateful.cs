@@ -6,14 +6,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
+using System.ServiceModel;
+using Microsoft.ServiceFabric.Services.Communication.Wcf;
 
 namespace AppService.Stateful
 {
+    [ServiceContract]
     public interface IStateful : IService
     {
+        [OperationContract]
         Task<string> GetHelloWorld();
     }
 
@@ -41,7 +46,24 @@ namespace AppService.Stateful
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new[] { new ServiceReplicaListener(context => this.CreateServiceRemotingListener(context)) };
+            return new[] {
+                new ServiceReplicaListener(context => this.CreateServiceRemotingListener(context), "RemotingEndpoint"),
+                new ServiceReplicaListener((context) =>
+                    new WcfCommunicationListener<IStateful>(
+                        wcfServiceObject:this,
+                        serviceContext:context,
+                        //
+                        // The name of the endpoint configured in the ServiceManifest under the Endpoints section
+                        // that identifies the endpoint that the WCF ServiceHost should listen on.
+                        //
+                        endpointResourceName: "WcfServiceEndpoint",
+
+                        //
+                        // Populate the binding information that you want the service to use.
+                        //
+                        listenerBinding: WcfUtility.CreateTcpListenerBinding()
+                    ), "WcfEndpoint")
+            };
         }
 
         /// <summary>
